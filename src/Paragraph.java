@@ -1,4 +1,3 @@
-// Paragraph.java
 public class Paragraph {
     private String text;
 

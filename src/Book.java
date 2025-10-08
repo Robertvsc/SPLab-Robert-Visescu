@@ -1,16 +1,19 @@
-// Book.java
 import java.util.ArrayList;
 import java.util.List;
 
 public class Book {
     private String title;
-    private List<Author> authors = new ArrayList<>();
-    private List<Chapter> chapters = new ArrayList<>();
-    private TableOfContents tableOfContents;
+    private List<Author> authors;
+    private List<Chapter> chapters;
 
     public Book(String title) {
         this.title = title;
-        this.tableOfContents = new TableOfContents();
+        this.authors = new ArrayList<>();
+        this.chapters = new ArrayList<>();
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void addAuthor(Author author) {
@@ -21,6 +24,10 @@ public class Book {
         chapters.add(chapter);
     }
 
+    public List<Chapter> getChapters() {
+        return chapters;
+    }
+
     public void print() {
         System.out.println("Book: " + title);
         for (Author a : authors) {
@@ -29,6 +36,5 @@ public class Book {
         for (Chapter c : chapters) {
             c.print();
         }
-        tableOfContents.print();
     }
 }
