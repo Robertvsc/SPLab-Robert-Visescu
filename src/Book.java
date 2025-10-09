@@ -3,29 +3,19 @@ import java.util.List;
 
 public class Book {
     private String title;
-    private List<Author> authors;
-    private List<Chapter> chapters;
+    private List<Author> authors = new ArrayList<>();
+    private List<Element> content = new ArrayList<>();
 
     public Book(String title) {
         this.title = title;
-        this.authors = new ArrayList<>();
-        this.chapters = new ArrayList<>();
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public void addAuthor(Author author) {
         authors.add(author);
     }
 
-    public void addChapter(Chapter chapter) {
-        chapters.add(chapter);
-    }
-
-    public List<Chapter> getChapters() {
-        return chapters;
+    public void addContent(Element element) {
+        content.add(element);
     }
 
     public void print() {
@@ -33,8 +23,8 @@ public class Book {
         for (Author a : authors) {
             a.print();
         }
-        for (Chapter c : chapters) {
-            c.print();
+        for (Element e : content) {
+            e.print();
         }
     }
 }
