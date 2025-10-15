@@ -9,8 +9,7 @@ public class Table implements Element {
     public void print() {
         System.out.println("Table: " + title);
     }
-
-    @Override
+     @Override
     public void add(Element element) {}
     @Override
     public void remove(Element element) {}
