@@ -17,5 +17,17 @@ public class Main {
         book.addContent(cap1);
 
         book.print();
+
+        Paragraph p4 = new Paragraph("Text aliniat la stanga");
+        Paragraph p2 = new Paragraph("Text aliniat la dreapta");
+        Paragraph p3 = new Paragraph("Text centrat");
+
+        p4.setAlignStrategy(new AlignLeft());
+        p2.setAlignStrategy(new AlignRight());
+        p3.setAlignStrategy(new AlignCenter());
+
+        p4.print();
+        p2.print();
+        p3.print();
     }
 }
