@@ -1,3 +1,4 @@
+package com.splab.proiect;
 import org.springframework.stereotype.Component;
 
 @Component
