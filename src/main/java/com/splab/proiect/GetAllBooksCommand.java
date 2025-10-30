@@ -2,7 +2,7 @@ package com.splab.proiect;
 
 import java.util.List;
 
-// Task 12: Comandă concretă
+
 public class GetAllBooksCommand implements Command<List<Book>> {
 
     // Comanda are o referință la Receiver
