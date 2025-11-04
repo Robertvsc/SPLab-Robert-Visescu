@@ -1,25 +1,32 @@
 package com.splab.proiect;
 
-// Am scos "final" ca să o putem modifica
+// Importurile necesare pentru JPA
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity // TASK 4: Spune JPA că această clasă este un tabel
 public class Book {
 
-    private int id;       // Am scos "final"
-    private String title;  // Am scos "final"
-    private String author; // Am scos "final"
+    @Id // TASK 4: Spune JPA că acesta este cheia primară (primary key)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // TASK 4: Spune bazei de date să genereze automat acest ID
+    private int id;
+    private String title;
+    private String author;
 
-    // 1. Constructor gol (Default Constructor)
-    // Jackson are nevoie de asta pentru a crea un obiect gol
+    // Constructor gol (JPA are nevoie de el)
     public Book() {
     }
-
-    // Constructorul nostru vechi, încă util
+    
+    // Constructorul nostru vechi
     public Book(int id, String title, String author) {
         this.id = id;
         this.title = title;
         this.author = author;
     }
 
-    // Getters (erau deja)
+    // Getters
     public int getId() {
         return id;
     }
@@ -31,9 +38,8 @@ public class Book {
     public String getAuthor() {
         return author;
     }
-
-    // 2. Setters
-    // Jackson folosește astea pentru a seta valorile din JSON
+    
+    // Setters
     public void setId(int id) {
         this.id = id;
     }
