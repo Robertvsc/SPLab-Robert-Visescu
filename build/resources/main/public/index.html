@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Watcher</title>
+</head>
+<body>
+    <h1>All Books (Live Updates)</h1>
+    <button onclick="startListening()">Start Receiving Books</button>
+    
+    <div id="sseDiv" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
+
+    <script>
+        function startListening() {
+            if (typeof(EventSource) !== "undefined") {
+                // Ne conectăm la endpoint-ul nostru SSE
+                const source = new EventSource("http://localhost:8080/books-sse");
+                
+                source.onmessage = function(event) {
+                    // Când serverul trimite o carte nouă, o afișăm
+                    const book = JSON.parse(event.data);
+                    const display = "New Book: ID " + book.id + " - " + book.title + " (" + book.author + ")<br>";
+                    document.getElementById("sseDiv").innerHTML += display;
+                };
+                
+                source.onerror = function() {
+                    console.log("Eroare conexiune SSE sau conexiune închisă.");
+                }
+                
+                console.log("SSE Connected!");
+            } else {
+                document.getElementById("sseDiv").innerHTML = "Your browser does not support server-sent events.";
+            }
+        }
+    </script>
+</body>
+</html>

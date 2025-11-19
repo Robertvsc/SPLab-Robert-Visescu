@@ -1,7 +1,5 @@
 package com.splab.proiect;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -10,76 +8,44 @@ import java.util.List;
 public class BooksController {
 
     private final BooksService booksService;
-    // 1. Injectăm noul nostru executor asincron
-    private final AsyncCommandExecutor asyncCommandExecutor;
+    // 1. Adăugăm Subiectul (Observer Pattern)
+    private final AllBooksSubject allBooksSubject;
 
-    public BooksController(BooksService booksService, 
-                           AsyncCommandExecutor asyncCommandExecutor) {
+    // 2. Injectăm ambele dependențe în constructor
+    public BooksController(BooksService booksService, AllBooksSubject allBooksSubject) {
         this.booksService = booksService;
-        this.asyncCommandExecutor = asyncCommandExecutor;
+        this.allBooksSubject = allBooksSubject;
     }
 
-    // --- PROCESARE SINCRONĂ (Rapidă) ---
-    // Acestea rămân la fel, execută comanda direct
-    
     @GetMapping
     public List<Book> getAllBooks() {
-        System.out.println("Controller: Se creează GetAllBooksCommand (Sincron)");
-        Command<List<Book>> command = new GetAllBooksCommand(booksService);
-        return command.execute(); 
+        return booksService.getAllBooks();
     }
 
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable("id") int id) {
-        System.out.println("Controller: Se creează GetBookByIdCommand (Sincron)");
-        Command<Book> command = new GetBookByIdCommand(booksService, id);
-        return command.execute();
+        return booksService.getBookById(id);
     }
 
-    // --- PROCESARE ASINCRONĂ (Lentă) ---
-    // Task 16: Schimbăm metoda POST
-    
+    // 3. Modificăm metoda POST pentru a notifica observatorii
     @PostMapping
-    public ResponseEntity<String> createBook(@RequestBody Book bookData) {
-        long threadId = Thread.currentThread().getId();
-        System.out.println(
-            "Controller: Primit POST pe thread-ul: " + threadId
-        );
-        System.out.println("Controller: Se creează AddBookCommand (Asincron)");
+    public Book createBook(@RequestBody Book bookData) {
+        // Salvăm cartea folosind service-ul
+        Book savedBook = booksService.addBook(bookData.getTitle(), bookData.getAuthor());
 
-        // 1. Creăm comanda
-        Command<Book> command = new AddBookCommand(
-            booksService, 
-            bookData.getTitle(), 
-            bookData.getAuthor()
-        );
-        
-        // 2. NU o executăm. O trimitem executorului să o ruleze în fundal.
-        asyncCommandExecutor.executeCommand(command);
+        // NOTIFICĂM observatorii (inclusiv browser-ul prin SSE) despre noua carte
+        allBooksSubject.add(savedBook);
 
-        // 3. Răspundem imediat clientului cu HTTP 202 ACCEPTED
-        // 
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body("Cartea este procesată în fundal.");
+        return savedBook;
     }
-    
-    // TODO: Lasă update și delete ca exercițiu
-    // (momentan sunt sincrone, dar le poți face asincrone la fel ca POST)
 
     @PutMapping("/{id}")
     public Book updateBook(@PathVariable("id") int id, @RequestBody Book bookData) {
-        System.out.println("Controller: Se creează UpdateBookCommand (Sincron)");
-        Command<Book> command = new UpdateBookCommand(
-            booksService, id, bookData.getTitle(), bookData.getAuthor()
-        );
-        return command.execute();
+        return booksService.updateBook(id, bookData.getTitle(), bookData.getAuthor());
     }
 
     @DeleteMapping("/{id}")
     public Boolean deleteBook(@PathVariable("id") int id) {
-        System.out.println("Controller: Se creează DeleteBookCommand (Sincron)");
-        Command<Boolean> command = new DeleteBookCommand(booksService, id);
-        return command.execute();
+        return booksService.deleteBook(id);
     }
 }
